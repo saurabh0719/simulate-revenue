@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 class Simulation:
 
-    def __init__(self, subscription_cost, total_users, total_artists, commission_cost):
+    def __init__(self, subscription_cost, total_users, total_artists, commission_cost, views_limit):
         self.subscription_cost = subscription_cost
         self.total_users = total_users
         self.total_artists = total_artists
@@ -14,6 +14,35 @@ class Simulation:
         self.artist_revenue_list = []
         self.artist_users_list = []
         self.users_following_list = []
+        self.views_limit = views_limit
+        self.total_views_per_artist = [0]*self.total_artists
+        self.total_views_per_user = []
+
+    
+    def modifyRevenuePerView(self, artists_list, artists_skip_list): # update total_views_per_artist and total_views_per_user 
+        # pass
+        final_artists_views_list = [0]*self.total_artists
+        total_user_views = 0
+        for i in range(self.total_artists):
+            if i in artists_skip_list: 
+                final_artists_views_list[i] = 0
+            else :
+                rand_views = random.randint(1, self.views_limit)
+                final_artists_views_list[i] = rand_views
+                total_user_views += rand_views
+                self.total_views_per_artist[i] += rand_views
+
+        print("Views of the user per artist :", final_artists_views_list)
+        self.total_views_per_user.append(total_user_views)
+        print("Total views for the user :", total_user_views)
+        cost_share = 1-(self.commission_cost/100)
+        cost_per_view = (self.subscription_cost*cost_share)/total_user_views
+
+        for i in range(self.total_artists):
+            final_artists_views_list[i] *= cost_per_view
+
+        return final_artists_views_list
+
 
     def returnUserShare(self):
         #print("calculating user row\n")
@@ -53,11 +82,16 @@ class Simulation:
         print("Artist skip list calculated :", artists_skip_list)
 
         for i in artists_skip_list:
-            artists_list[i-1] = 0
+            artists_list[i-1] = 0 #artist list contains initial list of revenue each artist makes, prior to modifying for view p/a
 
-        # print("Final List calculated :", artists_list)
-        return artists_list
+        print("Initial Artist List :", artists_list)
 
+        final_list = self.modifyRevenuePerView(artists_list, artists_skip_list)
+
+        print("Final List calculated :", final_list)
+        return final_list
+
+    
     def populateComputationMatrix(self):
         print("-------------------------------------- Populating Computation Matrix -----------------------------------------------")
         i = 0
@@ -71,6 +105,7 @@ class Simulation:
             i += 1
         print("\n-------------------------------------- Matrix population complete --------------------------------------\n")
 
+    
     def printComputationMatrix(self):
         print("-------------------------------------- Computation Matrix : Rows -> Users, Columns -> Artists -------------------------------------- \n")
         print("Total number of users :", self.total_users)
@@ -83,6 +118,7 @@ class Simulation:
         print("Total company commission based on", self.commission_cost, "percent commission is :", self.total_commission)
         print("------------------------------------------------------------------------------------------------------------------\n")
 
+    
     def printArtistResults(self):
         print("-------------------------------------- ARTIST ANALYSIS -------------------------------------- \n")
         for i in range(self.total_artists):
@@ -95,10 +131,11 @@ class Simulation:
             print("Artist", (i+1))
             self.artist_revenue_list.append(total_revenue)
             self.artist_users_list.append(user_count)
-            print("Total Revenue :", total_revenue, "\t Total Users :", user_count)
+            print("Total Revenue :", total_revenue, "\t Total Users :", user_count, "\t Total User Views :", self.total_views_per_artist[i])
             # print("\n")
         print("------------------------------------------------------------------------------------------------------------------\n")
 
+    
     def printUserResults(self):
         print("-------------------------------------- USER ANALYSIS --------------------------------------\n")
         for i in range(self.total_users):
@@ -106,12 +143,14 @@ class Simulation:
             for j in range(self.total_artists):
                 if self.computation_matrix[i][j] != 0:
                     artist_count += 1
-            fees_per_artist = self.subscription_cost/artist_count
+            # fees_per_artist = self.subscription_cost/artist_count
             print("User", (i+1))
-            print("Total artists followed :", artist_count, "\t fees per artist :", fees_per_artist)
+            # print("Total artists followed :", artist_count, "\t fees per artist :", fees_per_artist)
             # print("\n")
+            print("Total artists followed :", artist_count, "\t Total Views :", self.total_views_per_user[i])
         print("------------------------------------------------------------------------------------------------------------------\n")
 
+    
     def printArtistStatistics(self):
         print("-------------------------------------- ARTIST STATISTICS --------------------------------------\n")
         artists_mean_revenue = numpy.mean(self.artist_revenue_list)
@@ -144,10 +183,12 @@ class Simulation:
 
         print("\n------------------------------------------------------------------------------------------------------------------\n")
 
+    
     def printBarGraphs(self):
+        initial_base_axis_plot = list(range(1,self.total_artists+1))
         base_axis_plot = list(range(1,self.total_artists+1))
         #print(base_axis_plot)
-        plt.bar(base_axis_plot, self.artist_revenue_list, tick_label = base_axis_plot, width = 0.2, color = 'blue')
+        plt.bar(base_axis_plot, self.artist_revenue_list, tick_label = initial_base_axis_plot, width = 0.2, color = 'blue')
         # plt.xlabel("Artists")
         # plt.ylabel("Revenue")
         # plt.title("Revenue Bar Graph")
@@ -156,11 +197,16 @@ class Simulation:
             base_axis_plot[i] += 0.2
 
         #print(base_axis_plot)
-        plt.bar(base_axis_plot, self.artist_users_list, tick_label = base_axis_plot, width = 0.2, color = 'yellow')
+        plt.bar(base_axis_plot, self.artist_users_list, tick_label = initial_base_axis_plot, width = 0.2, color = 'green')
+
+        for i in range(len(base_axis_plot)):
+            base_axis_plot[i] += 0.2
+
+        plt.bar(base_axis_plot, self.total_views_per_artist, tick_label = initial_base_axis_plot, width = 0.2, color = 'red')
 
         plt.xlabel("Artists")
-        plt.ylabel("Users (y) / Revenue (b)")
-        plt.title("Revenue (blue) X Users (yellow)")
+        plt.ylabel("Revenue/Users/Views")
+        plt.title("Revenue (blue) X Users Following (green) X Total Views (red)")
 
         plt.show()
 
