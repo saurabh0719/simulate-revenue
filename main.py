@@ -5,8 +5,9 @@ def main():
     total_users = int(input("Enter the total number of users on the platform : "))
     total_artists = int(input("Enter the total number of artists on the platform : "))
     commission_cost = int(input("Enter platform commission eg. 40 for 40% :"))
+    views_limit = int(input("Enter the views upper limit p/a :"))
 
-    simulation = Simulation(subscription_cost, total_users, total_artists, commission_cost)
+    simulation = Simulation(subscription_cost, total_users, total_artists, commission_cost, views_limit)
     simulation.runSimulation()
     # summary_toggle = int(input("Enter 1 for detailed report and 0 for summary only :"))
 
