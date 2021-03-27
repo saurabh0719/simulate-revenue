@@ -7,6 +7,8 @@ class GlobalMemory:
         self.TOTAL_ARTISTS = 20
         self.COMMISSION_COST = 40
         self.VIEWS_LIMIT = 30
+        self.TOTAL_VIEWS_PER_ARTIST = []
+        self.ARTIST_USERS_LIST = []
 
     def initMemory(self, subscription_cost, total_users, total_artists, commission_cost, views_limit):
         self.SUBSCRIPTION_COST = subscription_cost
