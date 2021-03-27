@@ -1,33 +1,29 @@
 import random
 import numpy
 import matplotlib.pyplot as plt
+from globalMemory import gmemory
 
 class Simulation:
 
-    def __init__(self, subscription_cost, total_users, total_artists, commission_cost, views_limit):
-        self.subscription_cost = subscription_cost
-        self.total_users = total_users
-        self.total_artists = total_artists
-        self.commission_cost = commission_cost
+    def __init__(self):
         self.total_commission = 0
         self.computation_matrix = []
         self.artist_revenue_list = []
         self.artist_users_list = []
         self.users_following_list = []
-        self.views_limit = views_limit
-        self.total_views_per_artist = [0]*self.total_artists
+        self.total_views_per_artist = [0]*gmemory.TOTAL_ARTISTS
         self.total_views_per_user = []
 
     
     def modifyRevenuePerView(self, artists_list, artists_skip_list): # update total_views_per_artist and total_views_per_user 
         # pass
-        final_artists_views_list = [0]*self.total_artists
+        final_artists_views_list = [0]*gmemory.TOTAL_ARTISTS
         total_user_views = 0
-        for i in range(self.total_artists):
+        for i in range(gmemory.TOTAL_ARTISTS):
             if i in artists_skip_list: 
                 final_artists_views_list[i] = 0
             else :
-                rand_views = random.randint(1, self.views_limit)
+                rand_views = random.randint(1, gmemory.TOTAL_ARTISTS)
                 final_artists_views_list[i] = rand_views
                 total_user_views += rand_views
                 self.total_views_per_artist[i] += rand_views
@@ -35,10 +31,10 @@ class Simulation:
         print("Views of the user per artist :", final_artists_views_list)
         self.total_views_per_user.append(total_user_views)
         print("Total views for the user :", total_user_views)
-        cost_share = 1-(self.commission_cost/100)
-        cost_per_view = (self.subscription_cost*cost_share)/total_user_views
+        cost_share = 1-(gmemory.COMMISSION_COST/100)
+        cost_per_view = (gmemory.SUBSCRIPTION_COST*cost_share)/total_user_views
 
-        for i in range(self.total_artists):
+        for i in range(gmemory.TOTAL_ARTISTS):
             final_artists_views_list[i] *= cost_per_view
 
         return final_artists_views_list
@@ -46,31 +42,31 @@ class Simulation:
 
     def returnUserShare(self):
         #print("calculating user row\n")
-        total_artists_followed = random.randint(1, self.total_artists)
+        total_artists_followed = random.randint(1, gmemory.TOTAL_ARTISTS)
         self.users_following_list.append(total_artists_followed)
-        commission = self.commission_cost/100
-        self.total_commission += (commission*self.subscription_cost)
-        share_per_artist = ((self.subscription_cost*(1-commission))/total_artists_followed)
+        commission = gmemory.COMMISSION_COST/100
+        self.total_commission += (commission*gmemory.SUBSCRIPTION_COST)
+        share_per_artist = ((gmemory.SUBSCRIPTION_COST*(1-commission))/total_artists_followed)
         artists_list = []
         artists_skip_list = []
 
-        for i in range(self.total_artists):
+        for i in range(gmemory.TOTAL_ARTISTS):
             artists_list.append(share_per_artist)
 
-        total_artists_to_be_skipped = self.total_artists - total_artists_followed
+        total_artists_to_be_skipped = gmemory.TOTAL_ARTISTS - total_artists_followed
 
         print("Total artists followed :", total_artists_followed)
         print("Total artists not followed :", total_artists_to_be_skipped)
 
         if total_artists_to_be_skipped>0:
             i = 1
-            rand_var = random.randint(1, self.total_artists)
+            rand_var = random.randint(1, gmemory.TOTAL_ARTISTS)
             artists_skip_list.append(rand_var)
             print("Skip list appended :", rand_var)
             # print("first skip val appended\n")
             while i <= (total_artists_to_be_skipped-1):
                 # print("While loop running iteration : ", i)
-                temp_rand = random.randint(1, self.total_artists)
+                temp_rand = random.randint(1, gmemory.TOTAL_ARTISTS)
                 if(temp_rand in artists_skip_list):
                     continue
                 else:
@@ -95,7 +91,7 @@ class Simulation:
     def populateComputationMatrix(self):
         print("-------------------------------------- Populating Computation Matrix -----------------------------------------------")
         i = 0
-        while i <self.total_users:
+        while i < gmemory.TOTAL_USERS:
             print("Loop", (i+1), "in process...")
             rand_list = self.returnUserShare()
             print(rand_list)
@@ -108,23 +104,23 @@ class Simulation:
     
     def printComputationMatrix(self):
         print("-------------------------------------- Computation Matrix : Rows -> Users, Columns -> Artists -------------------------------------- \n")
-        print("Total number of users :", self.total_users)
-        print("Total number of artists :", self.total_artists)
+        print("Total number of users :", gmemory.TOTAL_USERS)
+        print("Total number of artists :", gmemory.TOTAL_ARTISTS)
         print("\n")
         #print(self.computation_matrix)
         list_as_matrix = numpy.array(self.computation_matrix)
         print(list_as_matrix)
         print("\n")
-        print("Total company commission based on", self.commission_cost, "percent commission is :", self.total_commission)
+        print("Total company commission based on", gmemory.COMMISSION_COST, "percent commission is :", self.total_commission)
         print("------------------------------------------------------------------------------------------------------------------\n")
 
     
     def printArtistResults(self):
         print("-------------------------------------- ARTIST ANALYSIS -------------------------------------- \n")
-        for i in range(self.total_artists):
+        for i in range(gmemory.TOTAL_ARTISTS):
             user_count = 0
             total_revenue = 0
-            for j in range(self.total_users):
+            for j in range(gmemory.TOTAL_USERS):
                 if self.computation_matrix[j][i] != 0:
                     user_count += 1
                     total_revenue += self.computation_matrix[j][i]
@@ -138,9 +134,9 @@ class Simulation:
     
     def printUserResults(self):
         print("-------------------------------------- USER ANALYSIS --------------------------------------\n")
-        for i in range(self.total_users):
+        for i in range(gmemory.TOTAL_USERS):
             artist_count = 0
-            for j in range(self.total_artists):
+            for j in range(gmemory.TOTAL_ARTISTS):
                 if self.computation_matrix[i][j] != 0:
                     artist_count += 1
             # fees_per_artist = self.subscription_cost/artist_count
@@ -185,8 +181,8 @@ class Simulation:
 
     
     def printBarGraphs(self):
-        initial_base_axis_plot = list(range(1,self.total_artists+1))
-        base_axis_plot = list(range(1,self.total_artists+1))
+        initial_base_axis_plot = list(range(1,gmemory.TOTAL_ARTISTS+1))
+        base_axis_plot = list(range(1,gmemory.TOTAL_ARTISTS+1))
         #print(base_axis_plot)
         plt.bar(base_axis_plot, self.artist_revenue_list, tick_label = initial_base_axis_plot, width = 0.2, color = 'blue')
         # plt.xlabel("Artists")
