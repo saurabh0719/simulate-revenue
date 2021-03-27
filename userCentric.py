@@ -99,6 +99,7 @@ class UserCentricSimulation:
             self.computation_matrix.append(rand_list)
             #print("Row returned", i+1)
             i += 1
+        gmemory.TOTAL_VIEWS_PER_ARTIST = self.total_views_per_artist
         print("\n-------------------------------------- Matrix population complete --------------------------------------\n")
 
     
@@ -129,6 +130,7 @@ class UserCentricSimulation:
             self.artist_users_list.append(user_count)
             print("Total Revenue :", total_revenue, "\t Total Users :", user_count, "\t Total User Views :", self.total_views_per_artist[i])
             # print("\n")
+        gmemory.ARTIST_USERS_LIST = self.artist_users_list 
         print("------------------------------------------------------------------------------------------------------------------\n")
 
     
@@ -202,17 +204,17 @@ class UserCentricSimulation:
 
         plt.xlabel("Artists")
         plt.ylabel("Revenue/Users/Views")
-        plt.title("Revenue (blue) X Users Following (green) X Total Views (red)")
+        plt.title("USER-CENTRIC Revenue (blue) X Users Following (green) X Total Views (red)")
 
         plt.show()
 
 
     def runSimulation(self):
-        print("\n-------------------------------------- SIMULATION RUNNING --------------------------------------\n")
+        print("\n-------------------------------------- USER-CENTRIC SIMULATION RUNNING --------------------------------------\n")
         self.populateComputationMatrix()
         self.printComputationMatrix()
-        self.printArtistResults()
         self.printUserResults()
+        self.printArtistResults()
         self.printArtistStatistics()
         # self.printRevenueBarGraph()
         # self.printUsersBarGraph()
