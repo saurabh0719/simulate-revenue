@@ -1,4 +1,4 @@
-from simulation import Simulation
+from userCentric import UserCentricSimulation
 from globalMemory import gmemory
 
 def main():
@@ -10,8 +10,8 @@ def main():
 
     gmemory.initMemory(subscription_cost, total_users, total_artists, commission_cost, views_limit)
     # gmemory.printGlobalMemory()
-    simulation = Simulation()
-    simulation.runSimulation()
+    user_centric_model = UserCentricSimulation()
+    user_centric_model.runSimulation()
     # summary_toggle = int(input("Enter 1 for detailed report and 0 for summary only :"))
 
     # simulation = Simulation(subscription_cost, total_users, total_artists, commission_cost)

@@ -3,7 +3,7 @@ import numpy
 import matplotlib.pyplot as plt
 from globalMemory import gmemory
 
-class Simulation:
+class UserCentricSimulation:
 
     def __init__(self):
         self.total_commission = 0
