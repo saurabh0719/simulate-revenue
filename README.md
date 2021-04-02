@@ -1,2 +1,2 @@
-# Simulation between User-Centric and Pro-Rata revenue model 
+# Simulation to compare User-Centric and Pro-Rata revenue models
 
